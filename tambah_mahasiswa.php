@@ -11,7 +11,33 @@
     if(!isset($_POST["submit"])){
         //form telah di submit, proses data
         //ambil semua nilai form
+        $nim            = htmlentities(strip_tags(trim($_POST["nim"])));
+        $nama           = htmlentities(strip_tags(trim($_POST["nama"])));
+        $tempat_lahir   = htmlentities(strip_tags(trim($_POST["tempat_lahir"])));
+        $fakultas       = htmlentities(strip_tags(trim($_POST["fakultas"])));
+        $jurusan        = htmlentities(strip_tags(trim($_POST["jurusan"])));
+        $ipk            = htmlentities(strip_tags(trim($_POST["ipk"])));
+        $tgl            = htmlentities(strip_tags(trim($_POST["tgl"])));
+        $bln            = htmlentities(strip_tags(trim($_POST["bln"])));
+        $thn            = htmlentities(strip_tags(trim($_POST["thn"])));
 
+        // siapkan variabel untuk menampung pesan error
+        $pesan_error="";
+        // cek apakah "nim" sudah diisi atau tidak
+        if(empty($nim)){
+            $pesan_error .= "Nim belum diisi <br>";
+        }
+        // NIM harus angka dengan 8 digit
+        elseif(!preg_match("/^[0-9]{8}$/",$nim)){
+            $pesan_error .= "Nim harus berupa  8 digit angka <br>";
+        }
+        //cek ke databse, apakah sudah ada nomor NIM yang sama
+        //filter data $nim 
+        $nim = mysqli_real_escape_string($link,$nim);
+        $query = "SELECT * FROM mahasiswa WHERE nim='$nim'";
+        $hasil_query = mysqli_query($link, $query);
+
+        
     }
 ?>
 
@@ -86,6 +112,57 @@
                         }
                     ?>
                 </select>
+                <select name="bln" id="">
+                        <?php
+                            foreach($arr_bln as $key => $value){
+                                if($key==$bln){
+                                    echo "<option value=\"{$key}\" selected>{$value}</option>";
+                                }else{
+                                    echo "<option value=\"{$key}\">{$value}</option>";
+                                }
+                            }
+                        ?>
+                </select>
+                <select name="thn">
+                    <?php
+                        for($i = 1990; $i <= 2005; $i++){
+                            if($i==$thn){
+                                echo "<option value = $i selected>";
+                            }else{
+                                echo "<option value = $i>";
+                            }
+                            echo "$i </option>";
+                        }
+                    ?>
+                </select>
+        </p>
+        <p>
+            <label for="fakultas">Fakultas : </label>
+               <select name="fakultas" id="fakultas">
+                    <option value="Kedokteran" <?php echo $select_kedokteran?>>Kedokteran </option>
+                    <option value="FMIPA" <?php echo $select_fmipa ?>>FMIPA </option>
+                    <option value="Ekonomi" <?php $select_ekonomi ?>>Ekonomi </option>
+                    <option value="Teknik" <?php $select_teknik ?>>Teknik </option>
+                    <option value="Sastra" <?php $select_sastra ?>>Sastra </option>
+                    <option value="FASILKOM" <?php echo $select_fasilkom ?>>Fasilkom </option>
+               </select>
+        </p>
+        <p>
+            <label for="jurusan">jurusan : </label>
+            <input type="text" name="jurusan" id="jurusan" value="<?php echo $jurusan ?>">
+        </p>
+        <p>
+          <label for="ipk">IPK </label>
+          <input type="text" name="ipk" id="ipk" value="<?php echo $ipk ?>" placeholder="Contoh: 2.75">
+          (angka desimal dipisah dengan karakter titik ".")
         </p>
     </fieldset>
+    <br>
+    <p>
+        <input type="submit" name="submit" value="Tambah Data">
+    </p>
 </form>
+    <div id="footer">
+        Copyright <?php echo date("Y"); ?>X Andriawan
+    </div>
+</div>
